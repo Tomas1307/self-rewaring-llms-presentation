@@ -169,7 +169,9 @@ Vuelta al paso 1 con `M_{t+1}`.
 
 ## 3. La crucial observación: el juez también mejora
 
-Aquí está el **hallazgo central** del paper.
+Aquí está el **hallazgo central** del paper, y la fuente de la pregunta sutil más importante.
+
+### 3.1. La observación
 
 Cuando aplicas DPO sobre los pares generados por el juez de `M_t`, los pesos del modelo se actualizan. **Pero esos mismos pesos producen los juicios**. Por tanto:
 
@@ -178,6 +180,133 @@ Cuando aplicas DPO sobre los pares generados por el juez de `M_t`, los pesos del
 Esto es **lo que diferencia Self-Rewarding de RLAIF clásico**. En RLAIF, el juez es congelado → la calidad del sistema está limitada por la calidad inicial del juez. En Self-Rewarding, el juez evoluciona → ¿en principio, sin límite?
 
 (Spoiler del cap 12: no, en práctica satura en 3 iteraciones. Pero la idea es notable.)
+
+### 3.2. Pregunta sutil: ¿por qué mejora el juez si DPO solo entrena generación?
+
+Este es **el punto más confuso** del paper para alguien que viene de NLP. La pérdida DPO es:
+
+```
+L_DPO = − E[ log σ( β · log(π_θ(y_w|x)/π_ref(y_w|x)) − β · log(π_θ(y_l|x)/π_ref(y_l|x)) ) ]
+```
+
+Esta pérdida **solo se calcula sobre respuestas**, no sobre juicios. Solo empuja `π_θ(y_w|x)` arriba y `π_θ(y_l|x)` abajo. **¿Por qué entonces mejora el juicio?**
+
+### 3.3. La respuesta — tres componentes
+
+> 📊 **Diagrama del mecanismo**:
+>
+> ```
+>   ┌──────────────────────────────────────────────────────┐
+>   │  EL LLM ES UNA SOLA RED DE PESOS θ                   │
+>   │                                                       │
+>   │     Pesos θ ⟶  capacidades subyacentes:               │
+>   │                  - comprensión semántica              │
+>   │                  - razonamiento                       │
+>   │                  - conocimiento del mundo             │
+>   │                  - habilidad de seguir instrucciones  │
+>   │                                                       │
+>   └──────────────────────────────────────────────────────┘
+>                            │
+>                ┌───────────┴───────────┐
+>                │                       │
+>                ↓                       ↓
+>    ┌──────────────────┐    ┌──────────────────┐
+>    │  Modo GENERADOR   │    │  Modo JUEZ       │
+>    │                   │    │                   │
+>    │  Prompt: "Pregún- │    │  Prompt: "Evalúa │
+>    │  tame algo"       │    │  esta respuesta" │
+>    │                   │    │                   │
+>    │  Forward pass con │    │  Forward pass con│
+>    │  los mismos pesos │    │  los mismos pesos│
+>    │  θ                │    │  θ               │
+>    │                   │    │                   │
+>    │  Output: y        │    │  Output: score   │
+>    └──────────────────┘    └──────────────────┘
+> ```
+
+**Componente 1 — Capabilities share**:
+
+Generar bien y juzgar bien comparten **las mismas capacidades subyacentes**:
+- Para escribir buena respuesta a "explica un transformer", necesitas entender qué es un transformer.
+- Para juzgar si una respuesta sobre transformers es buena, necesitas **el mismo conocimiento**.
+
+Cuando DPO mejora estas capacidades (al empujar `π_θ` hacia respuestas mejor scoreadas), las capacidades **se elevan** y eso beneficia **ambos modos**.
+
+**Componente 2 — Better reasoning → better judgment**:
+
+El prompt del juez típicamente incluye **chain-of-thought**: "Razona primero, luego da el score". El razonamiento es el mismo tipo de razonamiento que el modelo usa al generar respuestas. Si el modelo razona mejor en general (efecto colateral de DPO), también razona mejor al evaluar.
+
+**Componente 3 — Consistency**:
+
+Cuando DPO empuja `π_θ` a producir más `y_w` (respuestas de score alto) y menos `y_l` (score bajo), el modelo aprende **implícitamente** qué características hacen que `y_w` reciba alto score. Esa misma información — qué hace que una respuesta sea buena — es **exactamente lo que necesitas para juzgar**.
+
+### 3.4. Visualizado: por qué los pesos compartidos importan
+
+> 📊 **El efecto del update DPO sobre los dos modos**:
+>
+> ```
+>   ANTES de DPO (iteración t):
+>     ┌─────────────────────────────────────────────────────┐
+>     │ Pesos θ_t producen:                                  │
+>     │                                                       │
+>     │  Modo generador:                                      │
+>     │    π_{θ_t}(y_w | x) = 0.3                            │
+>     │    π_{θ_t}(y_l | x) = 0.4                            │
+>     │                                                       │
+>     │  Modo juez:                                           │
+>     │    Score(y_w) según θ_t = 4/5                        │
+>     │    Score(y_l) según θ_t = 3/5                        │
+>     │    (juez ya tiene una pista, pero acuerdo con humano = 65%)│
+>     └─────────────────────────────────────────────────────┘
+>
+>   Aplicamos DPO. Gradiente:
+>     - Sube π_θ(y_w|x), baja π_θ(y_l|x)
+>     - Pero θ_t es una red enorme con miles de parámetros compartidos
+>     - El gradiente toca pesos que afectan AMBOS modos
+>
+>   DESPUÉS de DPO (iteración t+1):
+>     ┌─────────────────────────────────────────────────────┐
+>     │ Pesos θ_{t+1} producen:                              │
+>     │                                                       │
+>     │  Modo generador:                                      │
+>     │    π_{θ_{t+1}}(y_w | x) = 0.5  ← subió               │
+>     │    π_{θ_{t+1}}(y_l | x) = 0.2  ← bajó                │
+>     │                                                       │
+>     │  Modo juez:                                           │
+>     │    Score(y_w) según θ_{t+1} = 4.5/5  ← más confiado   │
+>     │    Score(y_l) según θ_{t+1} = 2/5    ← más confiado   │
+>     │    (acuerdo con humano = 68%, MEJORÓ)                │
+>     └─────────────────────────────────────────────────────┘
+> ```
+
+### 3.5. Datos empíricos del paper
+
+Yuan 2024 reporta el acuerdo del juez con anotadores humanos sobre un set de validación:
+
+| Iter | Acuerdo con humanos |
+|---|---|
+| M_0 | 65.1% |
+| M_1 | 68.3% |
+| M_2 | 70.2% |
+| M_3 | (no reportado en detalle, pero satura) |
+
+**Importante**: la mejora del juez es **modesta** comparada con la del generador (AlpacaEval va de 9.94% a 20.44%). Esto sugiere que la mejora colateral existe pero es **limitada**.
+
+### 3.6. ¿Por qué entonces satura?
+
+Si el juez mejora con cada iteración, ¿por qué no continúa mejorando indefinidamente?
+
+Dos razones:
+
+1. **La mejora del juez es indirecta**. DPO no apunta a mejorarla — solo emerge por capabilities share. La señal de gradiente sobre el juez es **diluida**.
+
+2. **El juez también empieza a sufrir self-preference bias**. A medida que `M_t` evoluciona, su distribución preferida se desplaza, y el juez prefiere outputs de esa distribución (que ahora son también los que `M_t` genera). El feedback loop **se cierra sobre sí mismo**.
+
+Esta es exactamente la motivación de **Meta-Rewarding** (cap 07): si el problema es que el juez no se entrena explícitamente, **entrenémoslo explícitamente** introduciendo el meta-juez.
+
+### 3.7. Frase para defensa
+
+> *"DPO solo entrena el modo generador en su pérdida explícita. Pero el LLM es una sola red de pesos: las capacidades subyacentes — razonamiento, comprensión, conocimiento — son compartidas entre 'generar' y 'juzgar'. Cuando DPO mejora estas capacidades vía el gradiente, ambos modos se benefician. Yuan 2024 lo mide: el acuerdo del juez con humanos crece de 65% a 70% en tres iteraciones. La mejora colateral es real pero modesta — esto es precisamente lo que motiva Meta-Rewarding, que entrena el juicio explícitamente."*
 
 ---
 
