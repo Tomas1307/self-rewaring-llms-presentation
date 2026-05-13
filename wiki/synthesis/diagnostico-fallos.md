@@ -35,6 +35,18 @@ Si `r̂(y_w) ≈ r̂(y_l)`, el gradiente tiende a cero. **El loop se anula a sí
 
 **Implicación para la presentación**: Yuan 2024 evalúa solo 3 iteraciones. Más allá no se mantiene la mejora.
 
+### 2.1.bis. Sesgo acumulado en modelos pequeños
+
+**Quién lo documenta**: Wang Z. et al. 2024 (*CREAM: Consistency Regularized Self-Rewarding Language Models*, arXiv:2410.12735, ICLR 2025).
+
+**Mecanismo**: con modelos ~7B, las etiquetas de preferencia del juez interno se vuelven **progresivamente sobre-confiadas** tras varias iteraciones. El reward system acumula sesgo y produce datos de preferencia de calidad decreciente, llevando a **retroceso de rendimiento**.
+
+**Diferencia con saturación (§2.1)**: la saturación de Wang 2025 es geométrica (`r̂(y_w) − r̂(y_l) → 0`). El sesgo acumulado de CREAM es de **calibración** — el juez se vuelve menos confiable, no menos discriminativo.
+
+**Propuesta de mitigación (CREAM)**: regularizar por consistencia de rankings entre iteraciones consecutivas. Cuando la consistencia entre `M_t` y `M_{t-1}` es baja sobre un par concreto, atenuar la señal de preferencia.
+
+**Implicación**: Self-Rewarding ingenuo en modelos pequeños no solo plateau — **empeora**. Necesita explícitamente mecanismos de calibración del juez interno.
+
 ### 2.2. Inconsistencia entre rewards internos
 
 **Quién lo documenta**: Zhou et al. 2025 (*Self-Consistency of the Internal Reward Models*, arXiv:2502.08922).
@@ -116,6 +128,7 @@ Este es el "**cooperative collapse**" — versión cooperativa del mode collapse
 | # | Crítica | Paper | Métrica/evidencia | Mitigación propuesta |
 |---|---|---|---|---|
 | 1 | Saturación de señal | Wang 2025 (arXiv:2508.06026) | `r̂(y_w) − r̂(y_l) → 0` con t | Anchored Rejection + Future-Guided Chosen |
+| 1.5 | Sesgo acumulado (~7B) | Wang Z. 2024 / CREAM (arXiv:2410.12735) | Retroceso de rendimiento tras varias iter en modelos pequeños | Regularización por consistencia inter-iteración |
 | 2 | Rewards internos inconsistentes | Zhou 2025 (arXiv:2502.08922) | Disagreement rate entre judge y DPO implícito | SCIR (filtrar pares consistentes) |
 | 3 | Falla en matemáticas | Zhang 2025 (arXiv:2503.03746) | Degradación en GSM8K-like | Process-SRLM (juicio step-wise) |
 | 4 | Colapso por reward hacking | Shafayat 2025 (arXiv:2505.21444) | Performance crash en RL prolongado | (Sin solución cerrada) |

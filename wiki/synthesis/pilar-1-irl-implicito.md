@@ -5,6 +5,7 @@ metadata:
   type: synthesis
   tags: [pilar, irl, dpo, maxent, fundamentacion-teorica]
   last_updated: 2026-05-12
+  source_count: 5
 ---
 
 # Pilar 1 — IRL implícito en Self-Rewarding
@@ -74,6 +75,16 @@ Esto es la **recompensa implícita** asociada a la política. Al optimizar la p�
 
 **Por tanto: entrenar con DPO = recuperar una `r` implícita = IRL funcional.**
 
+### 2.5. Validación empírica: IRL aplicado a LLMs RLHF
+
+La afirmación "el modelo codifica una reward implícita" no es solo teórica. [[summaries/joselowitz-2025-irl-llm]] (Joselowitz et al. 2025, arXiv:2410.12491) **aplica IRL directamente a LLMs alineados con RLHF** y muestra que:
+
+- La reward function recuperada predice preferencias humanas con **hasta 85% de precisión** en datasets held-out.
+- La `r̂` recuperada **generaliza** a prompts no vistos.
+- Existe consistencia entre la `r̂` extraída por IRL y la noción de "buena respuesta" que el modelo aplica internamente.
+
+Esto cierra el círculo empírico: la reward implícita predicha por la dualidad MaxEnt-IRL ↔ DPO **existe**, **es recuperable** y **es semánticamente significativa**.
+
 ## 3. Self-Rewarding cierra el círculo
 
 En RLHF clásico, los pares `(x, y_w, y_l)` provienen de humanos. Los pares se interpretan como "el experto humano prefiere `y_w` sobre `y_l`". DPO recupera la `r` implícita que mejor explica esas decisiones — IRL desde preferencias humanas.
@@ -101,7 +112,8 @@ Tres pasos en una slide ó dos:
 
 1. **Mostrar la equivalencia formal** (ecuación cerrada KL-RLHF = forma MaxEnt-IRL).
 2. **Reconocer la diferencia con IRL clásico**: experto interno, no externo. Llamarlo "IRL auto-referencial" o "IRL implícito".
-3. **Citar la consolidación moderna**: [Lambert RLHF Book §5](https://rlhfbook.com/c/05-reward-models) ("reward modeling can be viewed as a kind of inverse RL"), [[summaries/wirth-2017-pbrl-survey]] (puente PbRL ↔ IRL), [[summaries/hejna-sadigh-2023-ipl]] (formaliza "preference-based RL sin reward function explícito").
+3. **Citar la consolidación moderna**: [Lambert RLHF Book §5](https://rlhfbook.com/c/05-reward-models) ("reward modeling can be viewed as a kind of inverse RL"), [[summaries/wirth-2017-pbrl-survey]] (puente PbRL ↔ IRL), [[summaries/hejna-sadigh-2023-ipl]] (formaliza "preference-based RL sin reward function explícito"), [[summaries/sun-vanderschaar-2024-irl-llm]] (tutorial dedicado a la conexión IRL ↔ alineamiento de LLMs).
+4. **Respaldar empíricamente** con [[summaries/joselowitz-2025-irl-llm]]: IRL recupera reward functions de LLMs RLHF con 85% precisión — la reward implícita es un objeto real, no solo retórico.
 
 **Frase para defensa:**
 
@@ -121,4 +133,6 @@ Tres pasos en una slide ó dos:
 - [[summaries/ziebart-2008-maxent-irl]] — paper que provee la forma exponencial.
 - [[summaries/rafailov-2023-dpo]] — paper que invierte la ecuación.
 - [[summaries/yuan-2024-self-rewarding]] — paper que cierra el círculo.
+- [[summaries/joselowitz-2025-irl-llm]] — validación empírica (IRL recupera reward de LLMs RLHF con 85% acc).
+- [[summaries/sun-vanderschaar-2024-irl-llm]] — tutorial dedicado a la conexión IRL ↔ LLM.
 - [[synthesis/pilar-3-dpo-en-loop]] — cómo DPO se integra mecánicamente en la iteración.

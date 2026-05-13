@@ -104,6 +104,19 @@ Una entrada por fuente. Organizada por categoría temática. Mantener ordenada p
 - **Cita**: Joey Hejna, Dorsa Sadigh. *Inverse Preference Learning: Preference-based RL without a Reward Function*. arXiv:2305.15363. NeurIPS 2023.
 - **URL**: https://arxiv.org/abs/2305.15363 · [NeurIPS proceedings](https://proceedings.neurips.cc/paper_files/paper/2023/hash/3be7859b36d9440372cae0a293f2e4cc-Abstract-Conference.html)
 
+### Joselowitz et al. (2025) — Insights from the Inverse
+
+- **Cita**: Joselowitz et al. *Insights from the Inverse: Reconstructing LLM Training Goals Through Inverse RL*. arXiv:2410.12491.
+- **URL**: https://arxiv.org/abs/2410.12491
+- **Resumen**: [[summaries/joselowitz-2025-irl-llm]]
+- **Aporte**: validación empírica del Pilar 1 — IRL recupera reward functions de LLMs RLHF con hasta 85% precisión.
+
+### Sun & van der Schaar (2024) — Inverse RL Meets LLM Alignment
+
+- **Cita**: Hao Sun, Mihaela van der Schaar. *Inverse RL Meets LLM Alignment*. Tutorial/Survey 2024. [VERIFICAR arXiv ID exacto]
+- **Resumen**: [[summaries/sun-vanderschaar-2024-irl-llm]]
+- **Aporte**: posicionamiento académico de la conexión IRL ↔ alineamiento LLM. Útil como respaldo bibliográfico del Pilar 1.
+
 ---
 
 ## 4. Variantes post-DPO (análisis teórico y alternativas)
@@ -172,6 +185,90 @@ Una entrada por fuente. Organizada por categoría temática. Mantener ordenada p
 - **Cita**: William Saunders, Catherine Yeh, Jeff Wu, Steven Bills, Long Ouyang, Jonathan Ward, Jan Leike (OpenAI). *Self-critiquing models for assisting human evaluators*. arXiv:2206.05802.
 - **URL**: https://arxiv.org/abs/2206.05802
 
+### Wang T. et al. (2024) — Self-Taught Evaluators
+
+- **Cita**: Tianlu Wang et al. (Meta FAIR). *Self-Taught Evaluators*. arXiv:2408.02666.
+- **URL**: https://arxiv.org/abs/2408.02666
+- **Aporte**: construye un LLM-as-a-Judge sin anotaciones humanas; iterativamente entrena el juez con sus propias predicciones mejoradas. Llama3-70B-Instruct pasa de 75.4 a 88.3 en RewardBench. Conecta con la idea "el juez también se entrena" central a Self-Rewarding.
+
+### Rosset et al. (2024) — DNO (Direct Nash Optimization)
+
+- **Cita**: Corby Rosset, Ching-An Cheng, Arindam Mitra, Michael Santacroce, Ahmed Awadallah, Tengyang Xie (Microsoft Research). *Direct Nash Optimization: Teaching Language Models to Self-Improve with General Preferences*. arXiv:2404.03715.
+- **URL**: https://arxiv.org/abs/2404.03715
+- **Aporte**: formaliza la auto-mejora iterativa como búsqueda de equilibrio de Nash sobre preferencias generales (sin asumir Bradley-Terry). Garantías de mejora monotónica. Orca-2.5-7B logra 33% win-rate vs GPT-4-Turbo en AlpacaEval 2.0.
+
+### Chen C. et al. (2024) — DICE (DPO ImpliCit rEwards)
+
+- **Cita**: Changyu Chen, Zichen Liu, Chao Du, et al. (Sea AI Lab). *Bootstrapping Language Models with DPO Implicit Rewards*. arXiv:2406.09760. ICLR 2025.
+- **URL**: https://arxiv.org/abs/2406.09760
+- **Aporte**: explota la **reward implícita de DPO** (`β·log π_θ/π_ref`) para construir nuevos pares de preferencias iterativamente, sin LLM-as-a-Judge externo. >8% mejora LC en AlpacaEval 2. Variante "minimalista" de Self-Rewarding.
+
+### Wang Z. et al. (2024) — CREAM (Consistency Regularized Self-Rewarding)
+
+- **Cita**: Zhaoyang Wang, Weilei He, Zhiyuan Liang, Xuchao Zhang, Chetan Bansal, Ying Wei, Weitong Zhang, Huaxiu Yao. *CREAM: Consistency Regularized Self-Rewarding Language Models*. arXiv:2410.12735. ICLR 2025.
+- **URL**: https://arxiv.org/abs/2410.12735
+- **Aporte**: diagnostica el **sesgo acumulado** en Self-Rewarding con modelos pequeños (~7B); propone regularización por consistencia de rankings entre iteraciones consecutivas. Atenúa señales de preferencia poco fiables. Cita complementaria de la crítica empírica.
+
+### Investigadores Salesforce (2024) — LaTRO
+
+- **Cita**: Salesforce AI Research. *Language Models are Hidden Reasoners: Unlocking Latent Reasoning Capabilities via Self-Rewarding (LaTRO)*. arXiv:2411.04282.
+- **URL**: https://arxiv.org/abs/2411.04282
+- **Aporte**: reformula el razonamiento como muestreo de variables latentes y optimiza política + reward conjuntamente, ambas derivadas del mismo LLM. Fundamento variacional para Self-Rewarding en reasoning.
+
+### ScPO (2024) — Self-Consistency Preference Optimization
+
+- **Cita**: *Self-Consistency Preference Optimization (ScPO)*. arXiv:2411.04109.
+- **URL**: https://arxiv.org/abs/2411.04109
+- **Aporte**: usa **consistencia entre múltiples cadenas de razonamiento** como señal de preferencia (mayoría → positivo, discordancia → negativo). Resuelve el problema "el juez no puede evaluar bien cuando él mismo no sabe la respuesta correcta".
+
+### Huang C. et al. (2024) — SER (Self-Evolved Reward Learning)
+
+- **Cita**: Chenghua Huang et al. *Self-Evolved Reward Learning for LLMs*. arXiv:2411.00418.
+- **URL**: https://arxiv.org/abs/2411.00418
+- **Aporte**: el **reward model mismo se auto-mejora** generando datos de entrenamiento adicionales. Garantías teóricas de convergencia. Funciona con datos humanos limitados.
+
+### Xiong et al. (2025) — Self-Rewarding Correction for Math
+
+- **Cita**: Wei Xiong, Hanning Zhang, Chenlu Ye, Lichang Chen, Nan Jiang, Tong Zhang (UIUC / Maryland). *Self-rewarding correction for mathematical reasoning*. arXiv:2502.19613.
+- **URL**: https://arxiv.org/abs/2502.19613
+- **Aporte**: framework de dos etapas para LLMs que razonan **y** auto-evalúan corrección durante inferencia. Sin verificadores externos. Match a sistemas con verificadores en math benchmarks.
+
+### SAR (2025) — Self-Aligned Reward
+
+- **Cita**: *Process-based Reward Model Meets Process-based Self-Rewarding (Self-Aligned Reward, SAR)*. arXiv:2509.05489.
+- **URL**: https://arxiv.org/abs/2509.05489
+- **Aporte**: **híbrido** entre reward verificable (binario) y self-aligned reward (granular). Resuelve el problema de respuestas innecesariamente largas en RL con reward verificable.
+
+### Zhang K. et al. (2025) — CoVo (Consistency + Volatility)
+
+- **Cita**: Kongcheng Zhang, Qi Yao, Shunyu Liu, Yingjie Wang, Baisheng Lai, Jieping Ye, Mingli Song, Dacheng Tao (Zhejiang / Alibaba / NTU). *Consistent Paths Lead to Truth: Self-Rewarding RL for LLM Reasoning (CoVo)*. arXiv:2506.08745.
+- **URL**: https://arxiv.org/abs/2506.08745
+- **Aporte**: deriva reward intrínseca de **patrones geométricos** en trayectorias de razonamiento: consistencia + baja volatilidad ⇒ correcto. Match a GRPO con verificador externo, sin reward model.
+
+### RLSR (2025) — Reinforcement Learning from Self Reward
+
+- **Cita**: *RLSR: Reinforcement Learning from Self Reward*. arXiv:2505.08827.
+- **URL**: https://arxiv.org/abs/2505.08827
+- **Aporte**: el modelo **también genera las tareas** que practica (curriculum self-directed), no solo se auto-evalúa. Paradigma de auto-mejora autónoma completa.
+
+### Multi-Agent Evolve (2025)
+
+- **Cita**: *Multi-Agent Evolve: LLM Self-Improve through Co-evolution*. arXiv:2510.23595.
+- **URL**: https://arxiv.org/abs/2510.23595
+- **Aporte**: framework multi-agente donde varias instancias del LLM co-evolucionan (generador + juez + curriculum). Recompensas: juez + dificultad + formato. Domain-agnostic; funciona en math/code/reasoning/QA.
+
+### Zhou Y. et al. (2024) — CSR (Calibrated Self-Rewarding VLM)
+
+- **Cita**: Yiyang Zhou, Zhiyuan Fan, Dongjie Cheng, Sihan Yang, Zhaorun Chen, Chenhang Cui, Xiyao Wang, Yun Li, Linjun Zhang, Huaxiu Yao. *Calibrated Self-Rewarding Vision Language Models*. arXiv:2405.14622. NeurIPS 2024.
+- **URL**: https://arxiv.org/abs/2405.14622
+- **Aporte**: extiende Self-Rewarding a **vision-language**. Reduce alucinaciones visuales incorporando restricciones explícitas de alineación imagen-texto en el self-reward. +7.62% promedio en 10 benchmarks multimodales.
+
+### Vision-SR1 (2025)
+
+- **Cita**: Investigadores NTU/NUS. *Self-Rewarding Vision-Language Model via Reasoning Decomposition (Vision-SR1)*. arXiv:2508.19652.
+- **URL**: https://arxiv.org/abs/2508.19652
+- **Aporte**: descompone razonamiento multimodal en (percepción visual auto-contenida) + (razonamiento lingüístico sobre la percepción). El re-promp del mismo modelo sobre solo la percepción produce la señal de auto-reward. Reduce alucinaciones y atajos lingüísticos.
+
 ---
 
 ## 6. Cooperative multi-agent y debate
@@ -198,6 +295,23 @@ Una entrada por fuente. Organizada por categoría temática. Mantener ordenada p
 - **Cita**: Ian J. Goodfellow, Jean Pouget-Abadie, Mehdi Mirza, et al. *Generative Adversarial Networks*. arXiv:1406.2661. NeurIPS 2014.
 - **URL**: https://arxiv.org/abs/1406.2661
 - **Uso**: solo como contraste estructural (adversarial ≠ cooperativo).
+
+---
+
+## 6.5. RL puro y auto-mejora con rewards verificables
+
+### Shao et al. (2024) — DeepSeekMath (GRPO)
+
+- **Cita**: Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junxiao Song, Xiao Bi, Haowei Zhang, Mingchuan Zhang, Y. K. Li, Y. Wu, Daya Guo. *DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models*. arXiv:2402.03300.
+- **URL**: https://arxiv.org/abs/2402.03300
+- **Aporte**: introduce **Group Relative Policy Optimization (GRPO)** — variante on-policy de PPO sin critic, usando baseline grupal. Ver [[concepts/grpo]].
+
+### DeepSeek-AI (2025) — DeepSeek-R1
+
+- **Cita**: DeepSeek-AI. *DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning*. arXiv:2501.12948.
+- **URL**: https://arxiv.org/abs/2501.12948
+- **Resumen / página de entidad**: [[entities/deepseek-r1]]
+- **Aporte**: hito empírico — capacidades de razonamiento avanzado emergen de RL puro (GRPO) sin SFT inicial. Comportamientos emergentes: auto-verificación, reflexión, "aha moment". Paradigma complementario a Self-Rewarding (verificable vs subjetivo).
 
 ---
 
@@ -251,7 +365,19 @@ Una entrada por fuente. Organizada por categoría temática. Mantener ordenada p
 
 ---
 
-## 9. Recursos pedagógicos (no para citar en slides, sí para el wiki)
+## 9. Documentos propios
+
+### Acosta (2026) — Investigación Técnica RL para Alineamiento
+
+- **Cita**: Tomás Acosta. *Reinforcement Learning para Alineamiento de LLMs: Del RLHF a los Self-Rewarding Language Models*. Universidad de los Andes, Mayo 2026.
+- **Archivo**: `wiki/raw/Investigacion_RL_para_LLMs_RLHF_RLAIF_SelfRewarding_DPO.pdf` (11 pp).
+- **Resumen**: [[summaries/acosta-2026-deep-research]]
+- **Naturaleza**: deep research interno del autor; mapa narrativo de la presentación.
+- **Páginas afectadas**: [[concepts/rlhf]], [[concepts/rlaif]], [[concepts/constitutional-ai]], [[concepts/grpo]], [[entities/deepseek-r1]], [[synthesis/comparacion-metodos]].
+
+---
+
+## 10. Recursos pedagógicos (no para citar en slides, sí para el wiki)
 
 | Recurso | Tipo | URL |
 |---|---|---|
@@ -274,7 +400,7 @@ Una entrada por fuente. Organizada por categoría temática. Mantener ordenada p
 6. **Ziebart et al. 2008 (MaxEnt IRL)** — puente formal IRL ↔ DPO.
 7. **Zheng et al. 2023 (LLM-as-a-Judge)** — fundamento + sesgos del paradigma.
 
-**Tier 2** (citables como respaldo, sin slide propia): Ouyang 2022, Christiano 2017, Schulman 2017 (PPO), Bai 2022 (Constitutional AI), Lee 2023 (RLAIF), Chen 2024 (SPIN), Wu 2024 (SPPO), Wirth 2017 (JMLR survey), Hejna-Sadigh 2023 (IPL), Ng-Russell 2000, Abbeel-Ng 2004, Madaan 2023 (Self-Refine), Zelikman 2022 (STaR), Huang 2023 (Self-Improve), Saunders 2022, Du 2024 (debate), Liang 2024 (MAD/DoT), Kim 2024 (Prospector), Zhou 2025 (SCIR), Zhang 2025 (Process-SRLM), Shafayat 2025, Li 2025 (judge survey), Ethayarajh 2024 (KTO), Hong 2024 (ORPO), Goodfellow 2014 (GAN — solo contraste).
+**Tier 2** (citables como respaldo, sin slide propia): Ouyang 2022, Christiano 2017, Schulman 2017 (PPO), Bai 2022 (Constitutional AI), Lee 2023 (RLAIF), Chen 2024 (SPIN), Wu 2024 (SPPO), Wirth 2017 (JMLR survey), Hejna-Sadigh 2023 (IPL), Ng-Russell 2000, Abbeel-Ng 2004, Madaan 2023 (Self-Refine), Zelikman 2022 (STaR), Huang 2023 (Self-Improve), Saunders 2022, Du 2024 (debate), Liang 2024 (MAD/DoT), Kim 2024 (Prospector), Zhou 2025 (SCIR), Zhang 2025 (Process-SRLM), Shafayat 2025, Li 2025 (judge survey), Ethayarajh 2024 (KTO), Hong 2024 (ORPO), Goodfellow 2014 (GAN — solo contraste), Shao 2024 (DeepSeekMath / GRPO), DeepSeek-AI 2025 (R1), Joselowitz 2025, Sun-vanderSchaar 2024, Tianlu Wang 2024 (Self-Taught Evaluators), Rosset 2024 (DNO), Chen C. 2024 (DICE), Wang Z. 2024 (CREAM), LaTRO 2024, ScPO 2024, SER 2024, Xiong 2025 (math correction), SAR 2025, Zhang K. 2025 (CoVo), RLSR 2025, Multi-Agent Evolve 2025, Zhou Y. 2024 (CSR), Vision-SR1 2025.
 
 ## Hiperparámetros verificados
 

@@ -13,8 +13,10 @@ Páginas conceptuales — los "bloques" que la presentación reutilizará.
 - [[concepts/llm-as-a-judge]] — Paradigma LLM-as-a-Judge: rúbrica aditiva, prompts, sesgos conocidos.
 - [[concepts/irl]] — Inverse Reinforcement Learning: formulación clásica (Ng-Russell) y MaxEnt (Ziebart).
 - [[concepts/preference-pair]] — Modelo Bradley-Terry y construcción de pares (y_w, y_l).
-- [[concepts/rlhf]] — Pipeline canónico RLHF (Christiano → InstructGPT) — `WIP`.
-- [[concepts/rlaif]] — Feedback de IA: Constitutional AI y RLAIF sistemático — `WIP`.
+- [[concepts/rlhf]] — Pipeline canónico RLHF (Christiano → InstructGPT): SFT → RM → PPO con 4 modelos en memoria.
+- [[concepts/rlaif]] — Feedback de IA (Lee 2023): reemplaza humanos por LLM externo en la anotación.
+- [[concepts/constitutional-ai]] — Constitutional AI (Bai 2022, Anthropic): RLAIF con principios explícitos auditables.
+- [[concepts/grpo]] — Group Relative Policy Optimization (Shao 2024, DeepSeek): PPO sin critic vía baseline grupal.
 - [[concepts/kl-beta]] — Coeficiente KL β: significado, ajuste, comportamiento iterativo — `WIP`.
 - [[concepts/reward-hacking]] — Modos de fallo: sesgo de auto-preferencia, length inflation, collapse — `WIP`.
 - [[concepts/cooperative-marl]] — Common-payoff Markov games aplicados a LLMs — `WIP`.
@@ -28,6 +30,7 @@ Modelos, benchmarks, datasets como ciudadanos de primera clase.
 - [[entities/mt-bench]] — MT-Bench: 8 categorías, multi-turn — `WIP`.
 - [[entities/arena-hard]] — Arena-Hard: prompts difíciles, comparación pairwise — `WIP`.
 - [[entities/llama-2-70b]] — Modelo base de Yuan 2024 — `WIP`.
+- [[entities/deepseek-r1]] — DeepSeek-R1 (2025): RL puro con GRPO, comportamientos emergentes, paradigma análogo a Self-Rewarding en dominio verificable.
 
 ## Summaries
 
@@ -41,19 +44,22 @@ Un resumen por paper ingerido. **Tier-1** (resumen completo) en negrita; el rest
 - **[[summaries/ziebart-2008-maxent-irl]]** — Ziebart et al. 2008, puente IRL ↔ DPO.
 - **[[summaries/zheng-2023-llm-as-judge]]** — Zheng et al. 2023, fundamento LLM-as-a-Judge.
 - **[[summaries/wirth-2017-pbrl-survey]]** — Wirth et al. 2017 (JMLR), survey PbRL.
+- **[[summaries/joselowitz-2025-irl-llm]]** — Joselowitz et al. 2025, IRL recupera reward de LLMs RLHF (85% acc).
+- **[[summaries/sun-vanderschaar-2024-irl-llm]]** — Sun & van der Schaar 2024, tutorial IRL ↔ LLM alignment.
+- **[[summaries/acosta-2026-deep-research]]** — Deep research propio (Mayo 2026), mapa narrativo de la presentación.
 
-Tier-2 (entrada en [[sources]] sin página propia hasta que se necesite): Ouyang 2022, Christiano 2017, Schulman 2017, Bai 2022, Lee 2023, Chen 2024 (SPIN), Wu 2024 (SPPO), Ng-Russell 2000, Abbeel-Ng 2004, Madaan 2023, Zelikman 2022, Huang 2023, Saunders 2022, Du 2024, Liang 2024, Kim 2024, Hejna-Sadigh 2023, Zhou 2025, Zhang 2025, Shafayat 2025, Li 2025, Ethayarajh 2024, Hong 2024, Goodfellow 2014.
+Tier-2 (entrada en [[sources]] sin página propia hasta que se necesite): Ouyang 2022, Christiano 2017, Schulman 2017, Bai 2022, Lee 2023, Chen 2024 (SPIN), Wu 2024 (SPPO), Ng-Russell 2000, Abbeel-Ng 2004, Madaan 2023, Zelikman 2022, Huang 2023, Saunders 2022, Du 2024, Liang 2024, Kim 2024, Hejna-Sadigh 2023, Zhou 2025, Zhang 2025, Shafayat 2025, Li 2025, Ethayarajh 2024, Hong 2024, Goodfellow 2014, Shao 2024 (DeepSeekMath/GRPO), DeepSeek-AI 2025 (R1).
 
 ## Synthesis
 
 Análisis transversal — el "núcleo argumentativo" de la presentación.
 
-- **[[synthesis/pilar-1-irl-implicito]]** — Pilar 1: ¿Es Self-Rewarding una instancia de IRL? Conexión formal vía MaxEnt-IRL ↔ DPO.
+- **[[synthesis/pilar-1-irl-implicito]]** — Pilar 1: ¿Es Self-Rewarding una instancia de IRL? Conexión formal vía MaxEnt-IRL ↔ DPO, validada empíricamente por Joselowitz 2025.
 - **[[synthesis/pilar-2-multi-agente-cooperativo]]** — Pilar 2: framing como common-payoff cooperative game.
 - **[[synthesis/pilar-3-dpo-en-loop]]** — Pilar 3: cómo encaja DPO en M_t → M_{t+1}, rol de β.
 - **[[synthesis/pipeline-completo]]** — Pipeline end-to-end con pseudocódigo — `WIP`.
 - **[[synthesis/diagnostico-fallos]]** — Modos de fallo documentados: saturación, sesgo de auto-preferencia, collapse, falla en razonamiento — síntesis de Wang 2025, Zhou 2025, Zhang 2025, Shafayat 2025, Self-Preference Bias 2024.
-- **[[synthesis/comparacion-metodos]]** — RLHF vs RLAIF vs SPIN vs Self-Rewarding vs Meta-Rewarding vs SPPO — `WIP`.
+- **[[synthesis/comparacion-metodos]]** — Tabla canónica RLHF vs DPO vs RLAIF vs SPIN vs Self-Rewarding vs Meta-Rewarding vs GRPO. Espacio de dos dimensiones (origen feedback × algoritmo).
 - **[[synthesis/genealogia-intelectual]]** — Sadigh 2017 → Christiano 2017 → Wirth 2017 → Ouyang 2022 → STaR/Self-Improve/Self-Refine → Yuan 2024 → críticas 2025 — `WIP`.
 
 ---
