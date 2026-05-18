@@ -15,6 +15,8 @@
 - [00-fundamentos-rl.md](00-fundamentos-rl.md) — Refresh de RL para alguien que viene de NLP. MDP, policy, value function, policy gradient, on-policy vs off-policy, KL divergence, PPO. Larga pero necesaria.
 - [00b-informacion-y-entropia.md](00b-informacion-y-entropia.md) — **Teoría de la información**: entropía, cross-entropy, KL (forward vs reverse), principio MaxEnt, distribución de Boltzmann, función de partición. Sin esto, la derivación de DPO y la equivalencia IRL ↔ DPO quedan opacas.
 
+> **Apoyo para dudas puntuales**: si al leer estos fundamentos las confusiones básicas (mapping LLM↔RL, política vs pesos, logits vs política, qué es V(s), por qué normalizar advantage, de dónde sale el reward) no terminan de despegar, consulta [../dudas/01-mapping-llm-rl.md](../dudas/01-mapping-llm-rl.md) — folder separado con explicaciones conversacionales paso a paso.
+
 ### Parte II — El pipeline clásico
 - [01-rlhf.md](01-rlhf.md) — Reinforcement Learning from Human Feedback. El paradigma de InstructGPT/ChatGPT. SFT → reward model → PPO.
 - [02-dpo.md](02-dpo.md) — Direct Preference Optimization. La derivación clave que vuelve a RLHF en un problema supervisado.
